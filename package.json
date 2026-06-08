@@ -1,0 +1,20 @@
+{
+  "name": "tools",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "create-student-list": "node ./create-student-list/index.js",
+    "grade": "node ./grade/index.js",
+    "fetch-exercise-points": "zx ./fetch-exercise-points/index.mjs",
+    "check-protected-files": "zx ./check-protected-files/index.mjs"
+  },
+  "type": "module",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "glob": "^11.0.1",
+    "rimraf": "^6.1.3",
+    "zx": "^8.8.5"
+  }
+}
