@@ -3,8 +3,11 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { $, minimist, path } from "zx";
 import students from "../data/students.json" with { type: "json" };
+import pMap from "p-map";
 
 usePowerShell();
+
+const POINTS_REGEX = /🏅\s*Total points:\s*(\d+)\/\d+/;
 
 const argv = minimist(process.argv.slice(2), {});
 
@@ -50,7 +53,7 @@ async function getRunLogs(owner, repo, runId) {
 }
 
 function extractPoints(logs) {
-  const match = logs.match(/Total points:\s*(\d+)\s*\/\s*\d+/i);
+  const match = logs.match(POINTS_REGEX);
   return match ? Number(match[1]) : 0;
 }
 
@@ -78,15 +81,25 @@ async function processRepository(owner, repo) {
 async function main() {
   const repositories = getRepositories();
 
-  const results = [];
-
-  for (const repository of repositories) {
-    console.log(`Processing ${repository.owner}/${repository.repo}`);
-    results.push(await processRepository(repository.owner, repository.repo));
-  }
+  const results = await pMap(
+    repositories,
+    (repository) => {
+      console.log(`Processing ${repository.owner}/${repository.repo}`);
+      return processRepository(repository.owner, repository.repo);
+    },
+    {
+      concurrency: 5,
+    },
+  );
 
   await writeFile(
-    path.join(import.meta.dirname, "..", "data", "exercises", `${EXERCISE}.json`),
+    path.join(
+      import.meta.dirname,
+      "..",
+      "data",
+      "exercises",
+      `${EXERCISE}.json`,
+    ),
     JSON.stringify(results, null, 2),
   );
 }
