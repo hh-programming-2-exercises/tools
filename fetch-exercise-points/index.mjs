@@ -7,7 +7,7 @@ import pMap from "p-map";
 
 usePowerShell();
 
-const POINTS_REGEX = /🏅\s*Total points:\s*(\d+)\/\d+/;
+const POINTS_REGEX = /🏅\s*Total points:\s*(\d+)\/\d+/g;
 
 const argv = minimist(process.argv.slice(2), {});
 
@@ -53,8 +53,9 @@ async function getRunLogs(owner, repo, runId) {
 }
 
 function extractPoints(logs) {
-  const match = logs.match(POINTS_REGEX);
-  return match ? Number(match[1]) : 0;
+  const match = Array.from(logs.matchAll(POINTS_REGEX)).at(-1);
+
+  return match ? Number(match[1]) : null;
 }
 
 async function processRepository(owner, repo) {
@@ -69,10 +70,15 @@ async function processRepository(owner, repo) {
   }
 
   const logs = await getRunLogs(owner, repo, run.databaseId);
+  const points = extractPoints(logs);
+
+  if (points === null) {
+    console.log(`Could not extract points from repository ${owner}/${repo} run ${run.databaseId} logs`);
+  }
 
   return {
     username: owner,
-    points: extractPoints(logs),
+    points: points ?? 0,
     timestamp: run.createdAt,
     repositoryUrl: `https://github.com/${owner}/${repo}`,
   };
@@ -83,10 +89,7 @@ async function main() {
 
   const results = await pMap(
     repositories,
-    (repository) => {
-      console.log(`Processing ${repository.owner}/${repository.repo}`);
-      return processRepository(repository.owner, repository.repo);
-    },
+    (repository) => processRepository(repository.owner, repository.repo),
     {
       concurrency: 5,
     },
