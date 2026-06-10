@@ -1,3 +1,9 @@
 {
-    "warming-up": ["src/test"]
+  "warming-up": ["src/test"],
+  "map": ["src/test"],
+  "inheritance-interfaces": ["src/test"],
+  "streams-and-lambdas": ["src/test"],
+  "sql-databases": ["src/test"],
+  "commit-history": ["src/test"],
+  "sorting-and-filtering": ["src/test"]
 }
