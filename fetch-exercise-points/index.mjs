@@ -1,7 +1,7 @@
 #!/usr/bin/env zx
 
 import { readFile, writeFile } from "node:fs/promises";
-import { $, minimist, path } from "zx";
+import { $, argv, path } from "zx";
 import students from "../data/students.json" with { type: "json" };
 import pMap from "p-map";
 
@@ -9,9 +9,7 @@ usePowerShell();
 
 const POINTS_REGEX = /🏅\s*Total points:\s*(\d+)\/\d+/g;
 
-const argv = minimist(process.argv.slice(2), {});
-
-const EXERCISE = argv._[1];
+const EXERCISE = argv._[0];
 
 if (!EXERCISE) {
   throw new Error("Missing the exercise argument");

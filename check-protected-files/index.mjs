@@ -1,6 +1,6 @@
 #!/usr/bin/env zx
 
-import { $, minimist, path } from "zx";
+import { $, path, argv } from "zx";
 import fs from "fs/promises";
 import students from "../data/students.json" with { type: "json" };
 import protectedFiles from "./protected-files.json" with { type: "json" };
@@ -9,9 +9,7 @@ import pMap from "p-map";
 
 usePowerShell();
 
-const argv = minimist(process.argv.slice(2), {});
-
-const EXERCISE = argv._[1];
+const EXERCISE = argv._[0];
 
 if (!EXERCISE) {
   throw new Error("Missing the exercise argument");
