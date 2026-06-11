@@ -73,14 +73,16 @@ async function processRepository(owner, repo) {
   const points = extractPoints(logs);
 
   if (points === null) {
-    console.log(`Could not extract points from repository ${owner}/${repo} run ${run.databaseId} logs`);
+    console.log(
+      `Could not extract points from repository ${owner}/${repo} run ${run.databaseId} logs`,
+    );
   }
 
   return {
     username: owner,
     points: points ?? 0,
     timestamp: run.createdAt,
-    repositoryUrl: `https://github.com/${owner}/${repo}`,
+    repositoryUrl: `https://github.com/${owner}/${repo}.git`,
   };
 }
 
@@ -96,14 +98,26 @@ async function main() {
   );
 
   await writeFile(
+    path.join(import.meta.dirname, "..", "data", "points", `${EXERCISE}.json`),
+    JSON.stringify(results, null, 2),
+  );
+
+  const plagiarismConfig = {
+    template: `https://github.com/hh-programming-2-exercises/${EXERCISE}.git`,
+    repositories: results
+      .filter(({ points }) => points > 0)
+      .map(({ repositoryUrl }) => repositoryUrl),
+  };
+
+  await writeFile(
     path.join(
       import.meta.dirname,
       "..",
       "data",
-      "exercises",
+      "plagiarism-configs",
       `${EXERCISE}.json`,
     ),
-    JSON.stringify(results, null, 2),
+    JSON.stringify(plagiarismConfig, null, 2),
   );
 }
 

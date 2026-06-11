@@ -12,7 +12,7 @@ function getFileName(filePath) {
 }
 
 async function getExercisePoints() {
-  const exerciseGlob = await glob(["data/exercises/*.json"]);
+  const exerciseGlob = await glob(["data/points/*.json"]);
   const exercisePoints = [];
 
   for (const file of exerciseGlob) {
