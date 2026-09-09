@@ -1,7 +1,12 @@
+#!/usr/bin/env zx
+
 import fs from "node:fs/promises";
 import path from "path";
 import { glob } from "glob";
 import pMap from "p-map";
+import { $, usePowerShell } from "zx";
+
+usePowerShell();
 
 const STUDENT_INFORMATION_SUBMISSION_PATH_REGEXP =
   /(?<fullName>[\w ]+)_(?<studentNumber>[0-9]+)_assignsubmission/;
@@ -30,21 +35,17 @@ async function getInvalidGitHubUsernames(usernames) {
   const invalidUsernames = await pMap(
     [...new Set(usernames)],
     async (username) => {
-      const response = await fetch(
-        `https://api.github.com/users/${encodeURIComponent(username)}`,
-        {
-          headers: {
-            Accept: "application/vnd.github+json",
-            "User-Agent": "haaga-helia-programming-2-scripts",
-          },
-        },
-      );
+      const result = await $`gh api users/${username}`.nothrow();
 
-      if (response.status === 404) {
+      if (result.exitCode === 0) {
+        return null;
+      }
+
+      if (result.stderr.includes("HTTP 404")) {
         return username;
-      } else if (!response.ok) {
+      } else {
         console.error(
-          `GitHub API request failed for ${username}: ${response.status} ${response.statusText}`,
+          `GitHub API request failed for ${username}: ${result.stderr.trim()}`,
         );
       }
       return null;

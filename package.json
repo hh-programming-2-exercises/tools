@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "create-student-list": "node ./create-student-list/index.js",
+    "create-student-list": "zx ./create-student-list/index.mjs",
     "grade": "node ./grade/index.js",
     "fetch-exercise-points": "zx ./fetch-exercise-points/index.mjs",
     "check-protected-files": "zx ./check-protected-files/index.mjs"
