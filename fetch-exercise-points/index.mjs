@@ -1,6 +1,6 @@
 #!/usr/bin/env zx
 
-import { readFile, writeFile } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 import { $, argv, path } from "zx";
 import students from "../data/students.json" with { type: "json" };
 import pMap from "p-map";
@@ -95,6 +95,10 @@ async function main() {
     },
   );
 
+  await mkdir(path.join(import.meta.dirname, "..", "data", "points"), {
+    recursive: true,
+  });
+
   await writeFile(
     path.join(import.meta.dirname, "..", "data", "points", `${EXERCISE}.json`),
     JSON.stringify(results, null, 2),
@@ -106,6 +110,10 @@ async function main() {
       .filter(({ points }) => points > 0)
       .map(({ repositoryUrl }) => repositoryUrl),
   };
+
+  await mkdir(path.join(import.meta.dirname, "..", "data", "plagiarism-configs"), {
+    recursive: true,
+  });
 
   await writeFile(
     path.join(
