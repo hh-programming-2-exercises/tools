@@ -3,7 +3,7 @@
 import { $, path, argv } from "zx";
 import fs from "fs/promises";
 import students from "../data/students.json" with { type: "json" };
-import protectedFiles from "./protected-files.json" with { type: "json" };
+import config from "../data/config.json" with { type: "json" };
 import { rimraf } from "rimraf";
 import pMap from "p-map";
 
@@ -15,15 +15,19 @@ if (!EXERCISE) {
   throw new Error("Missing the exercise argument");
 }
 
-const REPOS_FILE = "./repos.json";
-
-const TEMPLATE_REPO = `https://github.com/hh-programming-2-exercises/${EXERCISE}.git`;
+const TEMPLATE_REPO = `https://github.com/${config.templateRepositoryOrganization}/${EXERCISE}.git`;
 const UPSTREAM_BRANCH = "master";
+
+function toArray(value) {
+  return Array.isArray(value) ? value : [value];
+}
+
+const protectedFiles = config.protectedFiles ?? {};
 
 const FOLDERS_TO_CHECK = [
   ".github",
   ".grading",
-  ...(protectedFiles[EXERCISE] ?? []),
+  ...(protectedFiles[EXERCISE] ? toArray(protectedFiles[EXERCISE]) : []),
 ];
 
 const WORKDIR = path.join(
@@ -36,12 +40,11 @@ const WORKDIR = path.join(
 function getRepositories() {
   return students.map(({ githubUsername }) => ({
     owner: githubUsername,
-    repo: `programming-2-${EXERCISE}`,
+    repo: `${config.repositoryNamePrefix}-${EXERCISE}`,
   }));
 }
 
 async function checkRepository(owner, repo) {
-  const repoName = repo;
   const repoDir = path.join(WORKDIR, `${owner}-${repo}`);
   const repoUrl = `https://github.com/${owner}/${repo}.git`;
 
@@ -54,8 +57,6 @@ async function checkRepository(owner, repo) {
       await $`git clone --quiet ${repoUrl} ${repoDir}`.quiet();
     }
 
-    let hasUpstream = true;
-
     await $`git -C ${repoDir} remote add upstream ${TEMPLATE_REPO}`.quiet();
     await $`git -C ${repoDir} fetch upstream ${UPSTREAM_BRANCH}`.quiet();
 
@@ -65,9 +66,7 @@ async function checkRepository(owner, repo) {
     const changedFiles = diff.stdout.trim().split("\n").filter(Boolean);
 
     if (changedFiles.length > 0) {
-      console.log(
-        `Protected files changed in repository ${owner}/${repo}:\n`,
-      );
+      console.log(`Protected files changed in repository ${owner}/${repo}:\n`);
 
       console.log(
         (

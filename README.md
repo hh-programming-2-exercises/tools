@@ -8,6 +8,24 @@ Authenticate using GitHub CLI:
 gh auth login
 ```
 
+Add a `config.json` file to the `data` folder:
+
+```json
+{
+  "templateRepositoryOrganization": "hh-programming-2-exercises",
+  "repositoryNamePrefix": "programming-2",
+  "protectedFiles": {
+    "warming-up": "src/test",
+    "map": "src/test",
+    "inheritance-interfaces": "src/test",
+    "sorting-and-filtering": "src/test",
+    "sql-databases": "src/test",
+    "streams-and-lambdas": "src/test",
+    "commit-history": "src/test"
+  }
+}
+```
+
 Available scripts:
 
 ```bash

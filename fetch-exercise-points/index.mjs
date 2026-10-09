@@ -3,6 +3,7 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { $, argv, path } from "zx";
 import students from "../data/students.json" with { type: "json" };
+import config from "../data/config.json" with { type: "json" };
 import pMap from "p-map";
 
 usePowerShell();
@@ -20,7 +21,7 @@ const WORKFLOW = "grading.yml";
 function getRepositories() {
   return students.map(({ githubUsername }) => ({
     owner: githubUsername,
-    repo: `programming-2-${EXERCISE}`,
+    repo: `${config.repositoryNamePrefix}-${EXERCISE}`,
   }));
 }
 
@@ -105,15 +106,18 @@ async function main() {
   );
 
   const plagiarismConfig = {
-    template: `https://github.com/hh-programming-2-exercises/${EXERCISE}.git`,
+    template: `https://github.com/${config.templateRepositoryOrganization}/${EXERCISE}.git`,
     repositories: results
       .filter(({ points }) => points > 0)
       .map(({ repositoryUrl }) => repositoryUrl),
   };
 
-  await mkdir(path.join(import.meta.dirname, "..", "data", "plagiarism-configs"), {
-    recursive: true,
-  });
+  await mkdir(
+    path.join(import.meta.dirname, "..", "data", "plagiarism-configs"),
+    {
+      recursive: true,
+    },
+  );
 
   await writeFile(
     path.join(
