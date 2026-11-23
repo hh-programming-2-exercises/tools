@@ -81,11 +81,11 @@ function getStudentGrading(student) {
   const totalPoints =
     gitHelloWorldPoints + scaledWarmUpPoints + pointsAfterFirstWeek;
 
-  const grade = totalPoints < 8 ? 0 : Math.round(totalPoints / 8);
+  const exerciseGrade = totalPoints < 8 ? 0 : Math.round(totalPoints / 8);
 
   return {
     scaledPoints,
-    grade,
+    exerciseGrade,
   };
 }
 
@@ -102,11 +102,12 @@ async function writeGradingInformation() {
   const students = await getStudentsWithGradingInformation();
 
   const formattedStudents = students.map(
-    ({ fullName, studentNumber, githubUsername, scaledPoints, grade }) => ({
+    ({ fullName, studentNumber, githubUsername, scaledPoints, exerciseGrade }) => ({
       fullName,
       studentNumber,
       githubUsername,
-      grade,
+      exerciseGrade,
+      examGrade: 0,
       points: scaledPoints,
     }),
   );

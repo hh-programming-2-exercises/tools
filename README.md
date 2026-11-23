@@ -14,6 +14,17 @@ Add a `config.json` file to the `data` folder:
 {
   "templateRepositoryOrganization": "hh-programming-2-exercises",
   "repositoryNamePrefix": "programming-2",
+  "exercises": [
+    "git-hello-world",
+    "warming-up",
+    "map",
+    "junit",
+    "inheritance-interfaces",
+    "streams-and-lambdas",
+    "sql-databases",
+    "sorting-and-filtering",
+    "commit-history"
+  ],
   "protectedFiles": {
     "warming-up": "src/test",
     "map": "src/test",
@@ -33,4 +44,5 @@ npm run create-student-list
 npm run check-protected-files -- "warming-up"
 npm run fetch-exercise-points -- "warming-up"
 npm run grade
+npm run create-assessment-report
 ```

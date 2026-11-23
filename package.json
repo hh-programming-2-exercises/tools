@@ -7,7 +7,8 @@
     "create-student-list": "zx ./create-student-list/index.mjs",
     "grade": "node ./grade/index.js",
     "fetch-exercise-points": "zx ./fetch-exercise-points/index.mjs",
-    "check-protected-files": "zx ./check-protected-files/index.mjs"
+    "check-protected-files": "zx ./check-protected-files/index.mjs",
+    "create-assessment-report": "node ./create-assessment-report/index.mjs"
   },
   "type": "module",
   "author": "",
